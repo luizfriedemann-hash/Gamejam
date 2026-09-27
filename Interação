@@ -1,0 +1,70 @@
+using UnityEngine.InputSystem;
+using UnityEngine;
+
+public interface IInteractable
+{
+    void Interact();
+}
+
+public class Interacao : MonoBehaviour
+{
+    public GameObject intText;
+
+    public Transform InteractionSource;
+    public float InteractionRange = 2f;
+
+    public InputActionReference interactionInputAction;
+
+    private void OnEnable()
+    {
+        interactionInputAction.action.performed += Interact;
+    }
+
+    private void OnDisable()
+    {
+        interactionInputAction.action.performed -= Interact;
+    }
+
+    private void Update()
+    {
+        if (InteractionSource == null || intText == null)
+            return;
+
+        Ray playerAim = new Ray(
+            InteractionSource.position,
+            InteractionSource.forward
+        );
+
+        if (Physics.Raycast(playerAim, out RaycastHit hitInfo, InteractionRange))
+        {
+            if (hitInfo.collider.TryGetComponent(out IInteractable interactableObj))
+            {
+                intText.SetActive(true);
+                return;
+            }
+        }
+
+        intText.SetActive(false);
+    }
+
+    private void Interact(InputAction.CallbackContext obj)
+    {
+        Debug.Log("O botão E foi apertado com sucesso!");
+
+        if (InteractionSource == null)
+            return;
+
+        Ray playerAim = new Ray(
+            InteractionSource.position,
+            InteractionSource.forward
+        );
+
+        if (Physics.Raycast(playerAim, out RaycastHit hitInfo, InteractionRange))
+        {
+            if (hitInfo.collider.TryGetComponent(out IInteractable interactableObj))
+            {
+                interactableObj.Interact();
+            }
+        }
+    }
+}
