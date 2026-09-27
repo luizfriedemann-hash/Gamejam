@@ -1,0 +1,48 @@
+using Unity.Collections;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.Rendering.Universal;
+
+public class PortaAnim : MonoBehaviour, IInteractable
+{
+      [Header("Components")]
+      [SerializeField] private Animator animator; // aqui tem que arrastar o animator da porta
+      [Header("Configuração dos parametros do animator")]
+      [SerializeField] private string nomeParametroBool = "Está aberta";
+    
+      //tem que mudar o animator para Bool
+    
+
+      private bool estaAberta = false;
+
+      private void Start()
+    {
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+        }
+    }
+     public void Interact()
+    {
+        if(animator == null)
+        {
+            Debug.LogError($"Animator não encontrado em {gameObject.name}!");
+            return;
+        }
+        // Inverte o estado da porta (se aberta, fecha; se fechada, abre)
+        estaAberta = !estaAberta;
+
+        if(estaAberta)
+        {
+            animator.SetTrigger("open");
+            Debug.Log ("Porta abrindo");
+        }
+        else
+        {
+            animator.SetTrigger("close");
+            Debug.Log("porta fechando");
+        }
+        
+    }
+
+}
